@@ -1,4 +1,4 @@
-# SISAP 2026 Challenge: Working example in Python 
+# SISAP 2026 Challenge: Dream Team implementation
 
 This repository is a working example for the SISAP 2026 Indexing Challenge <https://sisap-challenges.github.io/>, working with Python and GitHub Actions.
 
