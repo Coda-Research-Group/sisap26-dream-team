@@ -69,7 +69,10 @@ if __name__ == "__main__":
                     gt_I = np.array(get_h5_item(gf, DATASETS[dataset][task]["gt_I"]))
                 gt_cache[cache_key] = gt_I
 
-            gt_I = gt_cache[cache_key]
+            if task == "task1":
+                gt_I = gt_cache[cache_key][:, 1:]  # skip self-match in task1
+            else:
+                gt_I = gt_cache[cache_key]
             k = DATASETS[dataset][task]["k"]
             recall = get_recall(knns, gt_I, k)
             row = dict(attrs)
