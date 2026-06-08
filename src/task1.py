@@ -230,8 +230,16 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
     n, d = data.shape
     k_search = k + 1  # query for one extra to guarantee k non-self neighbours
 
-    n_buckets = 128
-    nlist = 32
+    # Actual parameters we want to use
+    # n_buckets = 128
+    # nlist = 32
+    # hidden_layers = []
+    # epochs = 5
+    # lr = 0.00098
+    
+    # Parameters for testing
+    n_buckets = 64
+    nlist = 16
     hidden_layers = []
     epochs = 5
     lr = 0.00098
@@ -247,7 +255,7 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
         lr,
     )
 
-    train_size = n_buckets * nlist * 40
+    train_size = min(n_buckets * nlist * 40, len(data))
     batch_size_add = 100_000
     batch_size_search = 100_000
 
@@ -297,8 +305,6 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
 
             elapsed_search = time.time() - start_time
             print(f"Done searching in {elapsed_search}s.")
-
-            # I = I + 1  # FAISS is 0-indexed, groundtruth is 1-indexed
 
             identifier = f"index=({index_identifier}),query=(nprobe={nprobe},ivf_nprobe_total={ivf_nprobe_total},discard={discard})"
 
