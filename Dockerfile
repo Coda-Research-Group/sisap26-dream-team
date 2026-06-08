@@ -18,3 +18,5 @@ RUN pip install torch~=2.4.0 --index-url https://download.pytorch.org/whl/cpu
 
 # Copy source code
 COPY . .
+
+ENTRYPOINT [ "python3", "/app/search.py", "--input", "$inputDataset/*.h5", "--task-description", "$inputDataset/config.json", "--output", "$outputDir" ]

@@ -9,7 +9,6 @@ from .utils import store_results, merge_knn_results
 
 import logging
 import time
-from typing import Literal
 
 import faiss
 import numpy as np
