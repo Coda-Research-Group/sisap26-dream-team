@@ -11,24 +11,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Set up Dependencies
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-      - name: Install required python packages
-        run: |
-          python -m pip install --upgrade pip
-          pip3 install tira
-      - name: Build, test, and upload image
-        run: |
-          tira-cli login --token ${{ secrets.TIRA_CLIENT_TOKEN }}
-          tira-cli verify-installation --task sisap-2026 --team dream-team
-          tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-1-spot-check-20260528-training
-          tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-2-spot-check-20260528-training
-
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Set up Dependencies
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    - name: Install required python packages
+      run: |
+        python -m pip install --upgrade pip
+        pip3 install tira
+    - name: Build, test, and upload image for task 1
+      run: |
+        tira-cli login --token ${{ secrets.TIRA_CLIENT_TOKEN }}
+        tira-cli verify-installation --task sisap-2026 --team dream-team
+        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-1-spot-check-20260528-training
+    - name: Build, test, and upload image for task 2
+      run: |
+        tira-cli login --token ${{ secrets.TIRA_CLIENT_TOKEN }}
+        tira-cli verify-installation --task sisap-2026 --team dream-team
+        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-2-spot-check-20260528-training

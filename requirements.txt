@@ -5,3 +5,4 @@ tqdm
 faiss-cpu
 matplotlib
 pandas
+huggingface_hub[cli]

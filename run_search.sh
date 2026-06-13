@@ -1,36 +1,47 @@
-# TODO: Update hardware limits
-
 task=1
-dataset="wikipedia-small"
-mkdir -p results/$dataset
+datasetName="wikipedia-small"
+inputDataset="data/$datasetName"
+outputDir="results/$datasetName"
+mkdir -p $outputDir
 
 echo Running Task $task
 docker run \
     --rm \
     --user "$(id -u):$(id -g)" \
-    --cpus=4 \
-    --memory=16g \
-    --memory-swap=16g \
+    --cpus=8 \
+    --memory=24g \
+    --memory-swap=24g \
     --memory-swappiness 0 \
     --volume $(pwd)/search.py:/app/search.py:ro \
     --volume $(pwd)/data:/app/data:ro \
     --volume $(pwd)/results:/app/results:rw \
-    sisap-baseline python search.py --input data/$dataset/*.h5 --task-description data/$dataset/config.json --output results/$dataset/
-
+    --entrypoint python3 \
+    sisap-baseline \
+    "/app/search.py" \
+    --input $inputDataset/*.h5 \
+    --task-description $inputDataset/config.json \
+    --output $outputDir
 
 task=2
-dataset="llama-dev"
-mkdir -p results/$dataset
+datasetName="llama-dev"
+inputDataset="data/$datasetName"
+outputDir="results/$datasetName"
+mkdir -p $outputDir
 
 echo Running Task $task
 docker run \
     --rm \
     --user "$(id -u):$(id -g)" \
-    --cpus=4 \
-    --memory=16g \
-    --memory-swap=16g \
+    --cpus=8 \
+    --memory=24g \
+    --memory-swap=24g \
     --memory-swappiness 0 \
     --volume $(pwd)/search.py:/app/search.py:ro \
     --volume $(pwd)/data:/app/data:ro \
     --volume $(pwd)/results:/app/results:rw \
-    sisap-baseline python search.py --input data/$dataset/*.h5 --task-description data/$dataset/config.json --output results/$dataset/
+    --entrypoint python3 \
+    sisap-baseline \
+    "/app/search.py" \
+    --input $inputDataset/*.h5 \
+    --task-description $inputDataset/config.json \
+    --output $outputDir
