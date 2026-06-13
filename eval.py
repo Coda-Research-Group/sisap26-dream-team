@@ -70,7 +70,9 @@ if __name__ == "__main__":
                 gt_cache[cache_key] = gt_I
 
             if task == "task1":
-                gt_I = gt_cache[cache_key][:, 1:]  # skip self-match in task1
+                # skip self-loop in task1
+                gt_I = gt_cache[cache_key][:, 1:]
+                knns = knns[:, 1:]
             else:
                 gt_I = gt_cache[cache_key]
             k = DATASETS[dataset][task]["k"]

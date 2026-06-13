@@ -230,19 +230,21 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
     n, d = data.shape
     k_search = k + 1  # query for one extra to guarantee k non-self neighbours
 
-    # Actual parameters we want to use
-    # n_buckets = 128
-    # nlist = 32
-    # hidden_layers = []
-    # epochs = 5
-    # lr = 0.00098
-    
-    # Parameters for testing
-    n_buckets = 64
-    nlist = 16
-    hidden_layers = []
-    epochs = 5
-    lr = 0.00098
+    if dataset == "gooaq-small":
+        # Use smaller parameters for gooaq-small
+        # This is done because otherwise there is not enough data to train the index
+        n_buckets = 64
+        nlist = 16
+        hidden_layers = []
+        epochs = 5
+        lr = 0.00098
+    else:
+        # Actual parameters we want to use
+        n_buckets = 32
+        nlist = 256
+        hidden_layers = []
+        epochs = 5
+        lr = 0.00098
 
     index_identifier = f"LMI{n_buckets}+IVF{nlist}SQ8"
 
@@ -280,12 +282,12 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
 
     discard = True
 
-    for ivf_nprobe_total in [8, 16]:
-        for nprobe in [16]:
-            print(f"Starting search on {data.shape} with nprobe={nprobe}")
+    for ivf_nprobe_total in [8, 16, 32]:
+        for nprobe in [4, 8, 16]:
+            print(f"Starting search on {data.shape} with nprobe={nprobe} and ivf_nprobe_total={ivf_nprobe_total}")
             start_time = time.time()
-            I = np.empty((data.shape[0], k), dtype=np.int64)
-            D = np.empty((data.shape[0], k), dtype=np.float32)
+            I = np.empty((data.shape[0], k_search), dtype=np.int64)
+            D = np.empty((data.shape[0], k_search), dtype=np.float32)
 
             for start in range(0, len(data), batch_size_search):
                 end = min(start + batch_size_search, len(data))
@@ -298,8 +300,8 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
                     ivf_nprobe_total=ivf_nprobe_total,
                     discard=discard,
                 )
-                I[start:end] = indices[:, 1:]  # discard self-match
-                D[start:end] = distances[:, 1:]  # discard self-match
+                I[start:end] = indices
+                D[start:end] = distances
                 del data_batch, indices, distances
                 gc.collect()
 
