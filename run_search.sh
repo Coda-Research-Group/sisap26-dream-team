@@ -1,3 +1,5 @@
+# Specs provided by the github runner
+
 task=1
 datasetName="wikipedia-small"
 inputDataset="data/$datasetName"
@@ -8,9 +10,9 @@ echo Running Task $task
 docker run \
     --rm \
     --user "$(id -u):$(id -g)" \
-    --cpus=8 \
-    --memory=24g \
-    --memory-swap=24g \
+    --cpus=4 \
+    --memory=16g \
+    --memory-swap=16g \
     --memory-swappiness 0 \
     --volume $(pwd)/search.py:/app/search.py:ro \
     --volume $(pwd)/data:/app/data:ro \
@@ -32,9 +34,9 @@ echo Running Task $task
 docker run \
     --rm \
     --user "$(id -u):$(id -g)" \
-    --cpus=8 \
-    --memory=24g \
-    --memory-swap=24g \
+    --cpus=4 \
+    --memory=16g \
+    --memory-swap=16g \
     --memory-swappiness 0 \
     --volume $(pwd)/search.py:/app/search.py:ro \
     --volume $(pwd)/data:/app/data:ro \
