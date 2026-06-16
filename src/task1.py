@@ -287,8 +287,15 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
 
     discard = True
 
-    for ivf_nprobe_total in [8, 16, 32]:
-        for nprobe in [4, 8, 16]:
+    if dataset == "gooaq-small":
+        nprobes = [4, 8, 16, 32]
+        ivf_nprobe_totals = [4, 8, 16]
+    else:
+        nprobes = [4, 8, 16]
+        ivf_nprobe_totals = [8, 16, 32, 64, 128]
+
+    for nprobe in nprobes:
+        for ivf_nprobe_total in ivf_nprobe_totals:
             print(
                 f"Starting search on {data.shape} with nprobe={nprobe} and ivf_nprobe_total={ivf_nprobe_total}"
             )
