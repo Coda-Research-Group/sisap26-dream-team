@@ -29,9 +29,9 @@ jobs:
       run: |
         tira-cli login --token ${{ secrets.TIRA_CLIENT_TOKEN }}
         tira-cli verify-installation --task sisap-2026 --team dream-team
-        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-1-spot-check-20260528-training
+        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-1-spot-check-20260602-training
     - name: Build, test, and upload image for task 2
       run: |
         tira-cli login --token ${{ secrets.TIRA_CLIENT_TOKEN }}
         tira-cli verify-installation --task sisap-2026 --team dream-team
-        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-2-spot-check-20260528-training
+        tira-cli code-submission --path ${{ inputs.directory }} --task sisap-2026 --dataset sisap-2026/task-2-spot-check-20260602-training
