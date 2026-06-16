@@ -4,20 +4,14 @@ import time
 
 import faiss
 import numpy as np
-
-from .utils import store_results, merge_knn_results
-
-import logging
-import time
-
-import faiss
-import numpy as np
 import torch
 from torch import Tensor, nn
 from torch.nn import CrossEntropyLoss
 from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset
+
+from .utils import merge_knn_results, store_results
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +39,7 @@ class LearnedMetricIndexIVF:
     loss_fn: CrossEntropyLoss
     optimizer: Adam
     nlist: int
+    quantize: bool
 
     def __init__(
         self,
@@ -54,6 +49,7 @@ class LearnedMetricIndexIVF:
         hidden_layers: list[int] = [],
         epochs: int = 5,
         lr: float = 0.00098,
+        quantize: bool = True,
         **kwargs,
     ):
         super().__init__()
@@ -62,6 +58,7 @@ class LearnedMetricIndexIVF:
         self.epochs = epochs
         self.lr = lr
         self.nlist = nlist
+        self.quantize = quantize
 
         self._kmeans = faiss.Kmeans(
             dim, n_buckets, niter=10, verbose=False, spherical=True
@@ -123,6 +120,11 @@ class LearnedMetricIndexIVF:
                 self.optimizer.zero_grad()
 
             logger.debug(f"Epoch {epoch} | Loss {loss.item():.5f}")  # type: ignore
+
+        if self.quantize:
+            self.model = torch.ao.quantization.quantize_dynamic(
+                self.model, {nn.Linear}, dtype=torch.qint8
+            )
 
     def _predict(self, X: Tensor, top_k: int) -> tuple[Tensor, Tensor]:
         self.model.eval()
@@ -238,6 +240,7 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
         hidden_layers = []
         epochs = 5
         lr = 0.00098
+        quantize = True
     else:
         # Actual parameters we want to use
         n_buckets = 32
@@ -245,6 +248,7 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
         hidden_layers = []
         epochs = 5
         lr = 0.00098
+        quantize = True
 
     index_identifier = f"LMI{n_buckets}+IVF{nlist}SQ8"
 
@@ -255,6 +259,7 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
         hidden_layers,
         epochs,
         lr,
+        quantize,
     )
 
     train_size = min(n_buckets * nlist * 40, len(data))
@@ -284,7 +289,9 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
 
     for ivf_nprobe_total in [8, 16, 32]:
         for nprobe in [4, 8, 16]:
-            print(f"Starting search on {data.shape} with nprobe={nprobe} and ivf_nprobe_total={ivf_nprobe_total}")
+            print(
+                f"Starting search on {data.shape} with nprobe={nprobe} and ivf_nprobe_total={ivf_nprobe_total}"
+            )
             start_time = time.time()
             I = np.empty((data.shape[0], k_search), dtype=np.int64)
             D = np.empty((data.shape[0], k_search), dtype=np.float32)
