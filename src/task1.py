@@ -235,8 +235,8 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
     if dataset == "gooaq-small":
         # Use smaller parameters for gooaq-small
         # This is done because otherwise there is not enough data to train the index
-        n_buckets = 64
-        nlist = 16
+        n_buckets = 3
+        nlist = 4
         hidden_layers = []
         epochs = 5
         lr = 0.00098
@@ -288,8 +288,8 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
     discard = True
 
     if dataset == "gooaq-small":
-        nprobes = [4, 8, 16, 32]
-        ivf_nprobe_totals = [4, 8, 16]
+        nprobes = [1, 2, 3]
+        ivf_nprobe_totals = [1, 2, 4, 8]
     else:
         nprobes = [4, 8, 16]
         ivf_nprobe_totals = [8, 16, 32, 64, 128]
