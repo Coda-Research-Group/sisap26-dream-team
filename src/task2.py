@@ -30,8 +30,10 @@ def run_task2(data, queries, task, k, output_dir, dataset="unknown"):
     index.add(data)
     elapsed_build = time.time() - start
     print(f"Done training in {elapsed_build}s.")
+    
+    ef_searches = [10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000]
 
-    for ef_search in [100, 150, 200, 250, 300, 350, 400]:
+    for ef_search in ef_searches:
         print(f"Starting search on {queries.shape} with efSearch={ef_search}")
         start = time.time()
         index.hnsw.efSearch = ef_search
