@@ -16,7 +16,7 @@ from .utils import merge_knn_results, store_results
 logger = logging.getLogger(__name__)
 
 
-class _LMIDataset(Dataset):
+class _LIVFDataset(Dataset):
     def __init__(self, X: Tensor, y: Tensor):
         self.X = X
         self.y = y
@@ -28,7 +28,7 @@ class _LMIDataset(Dataset):
         return self.X[index], self.y[index]
 
 
-class LearnedMetricIndexIVF:
+class LearnedInvertedFileIndex:
     kmeans: faiss.Kmeans
     indices: list[faiss.Index]
     n_buckets: int
@@ -101,7 +101,7 @@ class LearnedMetricIndexIVF:
                 self._indices[i].train(bucket_data)  # pyright: ignore[reportCallIssue]
 
         train_loader = DataLoader(
-            dataset=_LMIDataset(data, assignment), batch_size=128, shuffle=True
+            dataset=_LIVFDataset(data, assignment), batch_size=128, shuffle=True
         )
 
         # Train the model
@@ -250,9 +250,9 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
         lr = 0.00098
         quantize = True
 
-    index_identifier = f"LMI{n_buckets}+IVF{nlist}SQ8"
+    index_identifier = f"LIVF{n_buckets},{nlist},SQ8"
 
-    index = LearnedMetricIndexIVF(
+    index = LearnedInvertedFileIndex(
         d,
         n_buckets,
         nlist,
@@ -326,7 +326,7 @@ def run_task1(data, task, k, output_dir, dataset="unknown"):
 
             store_results(
                 output_dir / f"{identifier}.h5",
-                "LMIIVF",
+                "LIVF",
                 dataset,
                 task,
                 D,
